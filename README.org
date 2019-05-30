@@ -1,0 +1,8 @@
+#+TITLE: mq (maths questions)
+#+AUTHOR: noisytoot
+* What is mq?
+  mq is a program that asks you maths questions
+* How to use?
+  mq <mode> <max>
+  - Mode "level1" :: Addition, subtraction
+  - Mode "level2" :: Aultiplication, division
