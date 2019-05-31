@@ -6,3 +6,14 @@
   mq <mode> <max>
   - Mode "level1" :: Addition, subtraction
   - Mode "level2" :: Multiplication, division
+* Configuration file
+** Where is the configuration file?
+   The location is set in the environment variable $MQ_CONFIG, if $MQ_CONFIG does not exist then it is in ~/.mq/config.toml
+** What format is it in?
+   It is written in TOML 0.4.0
+** What keys/sections are there?
+*** The section "mq"
+**** The integer "group" - The length of the group, can be set to any integer
+** What does it look like?
+   [mq]
+   group = 10

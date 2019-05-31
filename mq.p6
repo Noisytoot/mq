@@ -3,10 +3,16 @@ use v6;
 use Config::TOML;
 use Terminal::ANSIColor;
 
-my Str $config-file = "$*HOME/.mq/config.toml"; # Change this to change config file location, written in TOML 0.4.0
+my Str $config-file;
+if %*ENV<MQ_CONFIG>:exists {
+    $config-file = %*ENV<MQ_CONFIG>;
+} else {
+    $config-file = "$*HOME/.mq/config.toml";
+}
 my Hash %config = from-toml($config-file.IO.slurp);
 my Int $group = %config<mq><group>;
 my Int $score;
+    
 
 sub correct {
     say colored("Correct", "bold green");
@@ -25,19 +31,19 @@ sub score(Int $score, Int $group) {
     say colored("Score: $score out of $group", "bold yellow");
 }
 
+sub USAGE {
+    say "Usage: mq <mode> <max> -- <mode> should be level1 (addition, subtraction) or level2 (multiplication, division)";
+    say "Configuration file location is set in the environment variable \$MQ_CONFIG, or if that does not exist then in ~/.mq/config.toml";
+    say "Example configuration file:";
+    say colored("[mq]", "italic magenta");
+    say colored("group = 10", "italic magenta")
+}
+
 sub MAIN(Str $mode, Int $max) {
     if $max < 3 {
         say "Maximum must be more than 2";
         exit 1;
     }
-    
-    my Int $level;
-    if $mode eq "level1" {
-        $level = 1;
-    } elsif $mode eq "level2" {
-        $level = 2;
-    }
-    
     given $mode {
         when "level1" {
             loop (my Int $i = 0; $i < $group; $i++) {
@@ -56,6 +62,7 @@ sub MAIN(Str $mode, Int $max) {
                         $score++;
                     } else {
                         wrong $n1 + $n2;
+                        $group++;
                     }
                 } else {
                     if $result == $n1 - $n2 {
@@ -63,6 +70,7 @@ sub MAIN(Str $mode, Int $max) {
                         $score++;
                     } else {
                         wrong $n1 - $n2;
+                        $group++;
                     }
                 }
             }
@@ -90,6 +98,7 @@ sub MAIN(Str $mode, Int $max) {
                         $score++;
                     } else {
                         wrong $n1 * $n2;
+                        $group++;
                     }
                 } else {
                     if $result == $divanswer {
@@ -97,6 +106,7 @@ sub MAIN(Str $mode, Int $max) {
                         $score++;
                     } else {
                         wrong $divanswer;
+                        $group++;
                     }
                 }
             }
