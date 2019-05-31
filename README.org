@@ -15,5 +15,7 @@
 *** The section "mq"
     - The integer "group" :: The length of the group, can be set to any integer
 ** What does it look like?
-   [mq]
-   group = 10
+#+BEGIN_SRC toml
+[mq]
+group = 10
+#+END_SRC
