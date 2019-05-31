@@ -13,7 +13,7 @@
    It is written in TOML 0.4.0
 ** What keys/sections are there?
 *** The section "mq"
-**** The integer "group" - The length of the group, can be set to any integer
+    - The integer "group" :: The length of the group, can be set to any integer
 ** What does it look like?
    [mq]
    group = 10
