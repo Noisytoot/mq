@@ -8,7 +8,7 @@ This file is about mq version 1.1.0
   - Mode "level1" :: Addition, subtraction
   - Mode "level2" :: Multiplication, division
   - Optional named argument "disable-log" :: Disable the log file
-  Example: src_sh[:exports code]{mq --disable-log level1 10}
+  Example: ~mq --disable-log level1 10~
 * Configuration file
 ** Where is the configuration file?
    The location is set in the environment variable $MQ_CONFIG, if $MQ_CONFIG does not exist then it is in ~/.mq/config.toml
