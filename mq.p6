@@ -3,7 +3,7 @@ use v6;
 use Config::TOML;
 use Terminal::ANSIColor;
 
-my Int @version = 1, 1, 0;
+my Int @version = 1, 2, 0;
 my %*SUB-MAIN-OPTS = :named-anywhere;
 my Str $config-file;
 if %*ENV<MQ_CONFIG>:exists {
@@ -41,8 +41,14 @@ sub ask(Int $n1, Str $operator, Int $n2) {
 sub score(Int $score, Int $group) {
     say colored("Score: $score out of $group", "bold yellow");
 }
+
 sub slf-write(Str $file, DateTime $timestamp, Int $level, Int $max, Int $actual-length, Int $original-length, Int $score) {
     spurt $file, "R $timestamp $level $max $actual-length $original-length $score\n", :append;
+}
+
+sub progress(Int $score, Int $group) {
+    my $left = $group - $score;
+    say colored("Progress: $score done, $left left", "bold yellow");
 }
 
 sub USAGE {
@@ -96,6 +102,7 @@ sub MAIN(Str $mode, Int $max, Bool :$disable-log) {
                         $group++;
                     }
                 }
+                progress $score, $original-group;
             }
             score $score, $group;
             slf-write $log-file, DateTime.now(), $level, $max, $group, $original-group, $score unless $disable-log;
@@ -133,6 +140,7 @@ sub MAIN(Str $mode, Int $max, Bool :$disable-log) {
                         $group++;
                     }
                 }
+                progress $score, $original-group;
             }
             score $score, $group;
             slf-write $log-file, DateTime.now(), $level, $max, $group, $original-group, $score unless $disable-log;

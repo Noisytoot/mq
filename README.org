@@ -1,6 +1,6 @@
 #+TITLE: mq (maths questions)
 #+AUTHOR: noisytoot
-This file is about mq version 1.1.0
+This file is about mq version 1.2.0
 * What is mq?
   mq is a program that asks you maths questions
 * How to use?
