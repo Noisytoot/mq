@@ -3,7 +3,8 @@ use v6;
 use Config::TOML;
 use Terminal::ANSIColor;
 
-my Int @version = 1, 0, 0;
+my Int @version = 1, 1, 0;
+my %*SUB-MAIN-OPTS = :named-anywhere;
 my Str $config-file;
 if %*ENV<MQ_CONFIG>:exists {
     $config-file = %*ENV<MQ_CONFIG>;
@@ -54,7 +55,7 @@ sub USAGE {
     say colored("group = 10", "italic magenta")
 }
 
-sub MAIN(Str $mode, Int $max) {
+sub MAIN(Str $mode, Int $max, Bool :$disable-log) {
     if $max < 3 {
         say "Maximum must be more than 2";
         exit 1;
@@ -97,7 +98,7 @@ sub MAIN(Str $mode, Int $max) {
                 }
             }
             score $score, $group;
-            slf-write $log-file, DateTime.now(), $level, $max, $group, $original-group, $score;
+            slf-write $log-file, DateTime.now(), $level, $max, $group, $original-group, $score unless $disable-log;
         }
         when "level2" {
             loop (my Int $i = 0; $i < $group; $i++) {
@@ -134,7 +135,7 @@ sub MAIN(Str $mode, Int $max) {
                 }
             }
             score $score, $group;
-            slf-write $log-file, DateTime.now(), $level, $max, $group, $original-group, $score;
+            slf-write $log-file, DateTime.now(), $level, $max, $group, $original-group, $score unless $disable-log;
         }
     }
 }
