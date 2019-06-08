@@ -4,7 +4,7 @@ use Config::TOML;
 use Terminal::ANSIColor;
 use Readline;
 
-my Int @version = 1, 3, 0;
+my Int @version = 1, 3, 1;
 my Str $version = "@version[0].@version[1].@version[2]";
 my %*SUB-MAIN-OPTS = :named-anywhere;
 my Str $config-file;
@@ -16,6 +16,8 @@ if %*ENV<MQ_CONFIG>:exists {
 my Hash %config;
 if $config-file.IO.e {
     %config = from-toml($config-file.IO.slurp);
+    %config<mq><group> = 20 unless %config<mq><group>:exists;
+    %config<mq><max> = 10 unless %config<mq><max>:exists;
 } else {
     %config = mq => { group => 20, max => 10 };
 }
