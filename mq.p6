@@ -2,8 +2,10 @@
 use v6;
 use Config::TOML;
 use Terminal::ANSIColor;
+use Readline;
 
-my Int @version = 1, 2, 0;
+my Int @version = 1, 3, 0;
+my Str $version = "@version[0].@version[1].@version[2]";
 my %*SUB-MAIN-OPTS = :named-anywhere;
 my Str $config-file;
 if %*ENV<MQ_CONFIG>:exists {
@@ -11,7 +13,12 @@ if %*ENV<MQ_CONFIG>:exists {
 } else {
     $config-file = "$*HOME/.mq/config.toml";
 }
-my Hash %config = from-toml($config-file.IO.slurp);
+my Hash %config;
+if $config-file.IO.e {
+    %config = from-toml($config-file.IO.slurp);
+} else {
+    %config = mq => { group => 20, max => 10 };
+}
 my Int $group = %config<mq><group>;
 my Int $original-group = $group;
 my Int $score;
@@ -35,7 +42,8 @@ sub wrong(Int $correct) {
 }
 
 sub ask(Int $n1, Str $operator, Int $n2) {
-    return prompt(colored("What is $n1 $operator $n2? ", "bold cyan")).Int;
+    my Readline $readline = Readline.new();
+    return $readline.readline(colored("What is $n1 $operator $n2? ", "bold cyan")).Int;
 }
 
 sub score(Int $score, Int $group) {
@@ -52,16 +60,18 @@ sub progress(Int $score, Int $group) {
 }
 
 sub USAGE {
-    say "Usage: $*PROGRAM-NAME <mode> <max> -- <mode> should be level1 (addition, subtraction) or level2 (multiplication, division)";
-    say "mq version @version[0].@version[1].@version[2]";
+    say "Usage: $*PROGRAM-NAME <mode> <max>";
+    say "Valid modes: level1 (addition, subtraction), level2 (multiplication, division), get-group (print group length), get-max (print maximum)";
+    say "mq version $version";
     say "Log file location is set in the environment variable \$MQ_LOG, or if that does not exist then in ~/.mq/log.slf";
     say "Configuration file location is set in the environment variable \$MQ_CONFIG, or if that does not exist then in ~/.mq/config.toml";
     say "Example configuration file:";
     say colored("[mq]", "italic magenta");
-    say colored("group = 10", "italic magenta")
+    say colored("group = 20", "italic magenta");
+    say colored("max = 10", "italic magenta");
 }
 
-sub MAIN(Str $mode, Int $max, Bool :$disable-log) {
+sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log) {
     if $max < 3 {
         say "Maximum must be more than 2";
         exit 1;
@@ -74,6 +84,12 @@ sub MAIN(Str $mode, Int $max, Bool :$disable-log) {
     }
     
     given $mode {
+        when "get-group" {
+            say "Group length: $group";
+        }
+        when "get-max" {
+            say "Max: %config<mq><max>";
+        }
         when "level1" {
             loop (my Int $i = 0; $i < $group; $i++) {
                 my Str $operator;

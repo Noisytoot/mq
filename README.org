@@ -1,12 +1,14 @@
 #+TITLE: mq (maths questions)
 #+AUTHOR: noisytoot
-This file is about mq version 1.2.0
+This file is about mq version 1.3.0
 * What is mq?
   mq is a program that asks you maths questions
 * How to use?
   mq <mode> <max>
   - Mode "level1" :: Addition, subtraction
   - Mode "level2" :: Multiplication, division
+  - Mode "get-group" :: Get the group length
+  - Mode "get-max" :: Get the maximum number
   - Optional named argument "disable-log" :: Disable the log file
   Example: ~mq --disable-log level1 10~
 * Configuration file
@@ -20,7 +22,8 @@ This file is about mq version 1.2.0
 ** What does it look like?
 #+BEGIN_SRC toml
 [mq]
-group = 10
+group = 20
+length = 10
 #+END_SRC
 * Log file
 ** Where is the log file?
