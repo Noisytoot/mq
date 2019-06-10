@@ -4,9 +4,9 @@ use Config::TOML;
 use Terminal::ANSIColor;
 use Readline;
 
-my Int @version = 1, 3, 1;
+my Int @version = 1, 3, 2;
 my Str $version = "@version[0].@version[1].@version[2]";
-my %*SUB-MAIN-OPTS = :named-anywhere;
+my Bool %*SUB-MAIN-OPTS = :named-anywhere;
 my Str $config-file;
 if %*ENV<MQ_CONFIG>:exists {
     $config-file = %*ENV<MQ_CONFIG>;
@@ -57,7 +57,7 @@ sub slf-write(Str $file, DateTime $timestamp, Int $level, Int $max, Int $actual-
 }
 
 sub progress(Int $score, Int $group) {
-    my $left = $group - $score;
+    my Int $left = $group - $score;
     say colored("Progress: $score done, $left left", "bold yellow");
 }
 
