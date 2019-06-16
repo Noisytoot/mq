@@ -4,7 +4,7 @@ This file is about mq version 1.3.2
 * What is mq?
   mq is a program that asks you maths questions
 * How to use?
-  mq <mode> <max>
+  ~mq <mode> <max>~
   - Mode "level1" :: Addition, subtraction
   - Mode "level2" :: Multiplication, division
   - Mode "get-group" :: Get the group length
