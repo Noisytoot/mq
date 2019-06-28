@@ -4,7 +4,7 @@ use Config::TOML;
 use Terminal::ANSIColor;
 use Readline;
 
-my Int @version = 1, 3, 2;
+my Int @version = 1, 3, 3;
 my Str $version = "@version[0].@version[1].@version[2]";
 my Bool %*SUB-MAIN-OPTS = :named-anywhere;
 my Str $config-file;
@@ -23,7 +23,7 @@ if $config-file.IO.e {
 }
 my Int $group = %config<mq><group>;
 my Int $original-group = $group;
-my Int $score;
+my Int $score = 0;
 my Str $log-file;
 if %*ENV<MQ_LOG>:exists {
     $log-file = %*ENV<MQ_LOG>;
@@ -84,7 +84,7 @@ sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log) {
     } elsif $mode eq "level2" {
         $level = 2;
     }
-    
+
     given $mode {
         when "get-group" {
             say "Group length: $group";
