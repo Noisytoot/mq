@@ -1,6 +1,7 @@
 #!/usr/bin/env perl6
 
 # Copyright © 2019 Noisytoot
+# mq is a program that asks you maths questions
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
