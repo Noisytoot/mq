@@ -21,14 +21,22 @@ use Config::TOML;
 use Terminal::ANSIColor;
 use Readline;
 
-my Int @version = 1, 3, 3;
-my Str $version = "@version[0].@version[1].@version[2]";
+constant @version = 1, 4, 0;
+constant $version = "@version[0].@version[1].@version[2]";
 my Bool %*SUB-MAIN-OPTS = :named-anywhere;
+
 my Str $config-file;
+my Str $config-dir;
+if %*ENV<MQ_CONFIG_DIR>:exists {
+    $config-dir = %*ENV<MQ_CONFIG_DIR>;
+} else {
+    $config-dir = "$*HOME/.mq"
+}
+
 if %*ENV<MQ_CONFIG>:exists {
     $config-file = %*ENV<MQ_CONFIG>;
 } else {
-    $config-file = "$*HOME/.mq/config.toml";
+    $config-file = "$config-dir/config.toml";
 }
 my Hash %config;
 if $config-file.IO.e {
@@ -45,8 +53,9 @@ my Str $log-file;
 if %*ENV<MQ_LOG>:exists {
     $log-file = %*ENV<MQ_LOG>;
 } else {
-    $log-file = "$*HOME/.mq/log.slf";
+    $log-file = "$config-dir/log.slf";
 }
+mkdir $config-dir unless $config-dir.IO.e;
 unless $log-file.IO.e {
     spurt $log-file, "SLF 1\nMQ_LOG 1\nH TIMESTAMP LEVEL MAX ACTUAL_LENGTH ORIGINAL_LENGTH SCORE\n";
 }
@@ -81,13 +90,14 @@ sub progress(Int $score, Int $group) {
 sub USAGE {
     say "Usage: $*PROGRAM-NAME <mode> <max>";
     say "Valid modes: level1 (addition, subtraction), level2 (multiplication, division), get-group (print group length), get-max (print maximum)";
-    say "mq version $version";
-    say "Log file location is set in the environment variable \$MQ_LOG, or if that does not exist then in ~/.mq/log.slf";
-    say "Configuration file location is set in the environment variable \$MQ_CONFIG, or if that does not exist then in ~/.mq/config.toml";
+    say "mq version $version\n";
+    say "Config dir location is set in the environment variable \$MQ_CONFIG_DIR, the default is ~/.mq, the following variables override this:";
+    say "Log file location is set in the environment variable \$MQ_LOG, the default is ~/.mq/log.slf";
+    say "Configuration file location is set in the environment variable \$MQ_CONFIG, the default is ~/.mq/config.toml\n";
     say "Example configuration file:";
-    say colored("[mq]", "italic magenta");
-    say colored("group = 20", "italic magenta");
-    say colored("max = 10", "italic magenta");
+    say colored("[", "italic cyan") ~ colored("mq", "italic yellow") ~ colored("]", "italic cyan");
+    say colored("group", "italic magenta") ~ " " ~ colored("=", "italic cyan") ~ " " ~ colored("20", "italic yellow");
+    say colored("max", "italic magenta") ~ " " ~ colored("=", "italic cyan") ~ " " ~ colored("10", "italic yellow");
 }
 
 sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log) {
