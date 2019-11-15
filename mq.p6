@@ -21,7 +21,7 @@ use Config::TOML;
 use Terminal::ANSIColor;
 use Readline;
 
-constant @version = 1, 4, 0;
+constant @version = 1, 4, 1;
 constant $version = "@version[0].@version[1].@version[2]";
 my Bool %*SUB-MAIN-OPTS = :named-anywhere;
 
@@ -101,10 +101,9 @@ sub USAGE {
 }
 
 sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log) {
-    if $max < 3 {
-        say "Maximum must be more than 2";
-        exit 1;
-    }
+    die "Maximum must be more than 2" if $max < 3;
+    die "Maximum must be more than 0" if $group < 1;
+    
     my Int $level;
     if $mode eq "level1" {
         $level = 1;
