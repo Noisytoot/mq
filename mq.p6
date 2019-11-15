@@ -21,7 +21,7 @@ use Config::TOML;
 use Terminal::ANSIColor;
 use Readline;
 
-constant @version = 1, 4, 1;
+constant @version = 1, 5, 0;
 constant $version = "@version[0].@version[1].@version[2]";
 my Bool %*SUB-MAIN-OPTS = :named-anywhere;
 
@@ -46,8 +46,8 @@ if $config-file.IO.e {
 } else {
     %config = mq => { group => 20, max => 10 };
 }
-my Int $group = %config<mq><group>;
-my Int $original-group = $group;
+my Int $config-group = %config<mq><group>;
+my Int $original-group = $config-group;
 my Int $score = 0;
 my Str $log-file;
 if %*ENV<MQ_LOG>:exists {
@@ -88,7 +88,7 @@ sub progress(Int $score, Int $group) {
 }
 
 sub USAGE {
-    say "Usage: $*PROGRAM-NAME <mode> <max>";
+    say "Usage: $*PROGRAM-NAME [--disable-log] [--group=<group-length>] <mode> <max>";
     say "Valid modes: level1 (addition, subtraction), level2 (multiplication, division), get-group (print group length), get-max (print maximum)";
     say "mq version $version\n";
     say "Config dir location is set in the environment variable \$MQ_CONFIG_DIR, the default is ~/.mq, the following variables override this:";
@@ -100,7 +100,8 @@ sub USAGE {
     say colored("max", "italic magenta") ~ " " ~ colored("=", "italic cyan") ~ " " ~ colored("10", "italic yellow");
 }
 
-sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log) {
+sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log, Int :$group = $config-group) {
+    $original-group = $group unless $group == $original-group;
     die "Maximum must be more than 2" if $max < 3;
     die "Maximum must be more than 0" if $group < 1;
     
@@ -112,12 +113,8 @@ sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log) {
     }
 
     given $mode {
-        when "get-group" {
-            say "Group length: $group";
-        }
-        when "get-max" {
-            say "Max: %config<mq><max>";
-        }
+        say "Group length: $config-group" when "get-group";
+        say "Max: %config<mq><max>" when "get-max";
         when "level1" {
             loop (my Int $i = 0; $i < $group; $i++) {
                 my Str $operator;
