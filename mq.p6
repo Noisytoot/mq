@@ -21,7 +21,7 @@ use Config::TOML;
 use Terminal::ANSIColor;
 use Readline;
 
-constant @version = 1, 5, 1;
+constant @version = 1, 5, 2;
 constant $version = "@version[0].@version[1].@version[2]";
 my Bool %*SUB-MAIN-OPTS = :named-anywhere;
 
@@ -100,7 +100,7 @@ sub USAGE {
     say colored("max", "italic magenta") ~ " " ~ colored("=", "italic cyan") ~ " " ~ colored("10", "italic yellow");
 }
 
-sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log, Int :$group = $config-group) {
+sub MAIN(Str $mode, Int $max = %config<mq><max>, Bool :$disable-log, Int :$group is copy = $config-group) {
     $original-group = $group unless $group == $original-group;
     die "Maximum must be more than 2" if $max < 3;
     die "Group length (number of questions) must be more than 0" if $group < 1;
